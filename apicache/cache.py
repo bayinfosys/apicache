@@ -61,7 +61,7 @@ class APICache:
         fetched_time = datetime.strptime(fetched_at, "%Y-%m-%d %H:%M:%S")
         return datetime.utcnow() - fetched_time < timedelta(seconds=self.ttl)
 
-    def put(self, url: str, params: dict, response: dict):
+    def write(self, url: str, params: dict, response: dict):
         """insert a new request/response into the api cache table"""
         hash_id = self.compute_hash({"url": url, "params": params})
 
@@ -80,7 +80,7 @@ class APICache:
 
         logger.info("insert %s[%s]->%s", url, str(params), hash_id)
 
-    def get(self, url, params):
+    def read(self, url, params):
         """return a response from the cache"""
         hash_id = self.compute_hash({"url": url, "params": params})
 
@@ -159,12 +159,12 @@ class APICache:
                 raise e
 
             try:
-                self.put(url, params, raw_data)
+                self.write(url, params, raw_data)
             except Exception as e:
                 logger.error("failed to cache response [%s]", str(e))
                 raise e
 
-        return cache_hit, self.get(url, params)
+        return cache_hit, self.read(url, params)
 
     def clear_for_url(self, url_prefix: str):
         """

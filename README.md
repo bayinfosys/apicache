@@ -175,8 +175,8 @@ class OpenAICache:
 cache = APICache(request_fn, ttl=3600, location="api-cache.sqlite")
 
 cache.request(url, params) → (hit: bool, response: dict)
-cache.get(url, params)
-cache.put(url, params, response)
+cache.read(url, params)
+cache.write(url, params, response)
 cache.has(url, params)
 cache.clear_for_url("/some/api/prefix")
 cache.prune_old_versions()
